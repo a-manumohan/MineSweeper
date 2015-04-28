@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg_game_view">#55fff000</color>
+    <color name="border_cell">#000000</color>
+    <color name="fill_cell">#ADD8E6</color>
+    <color name="fill_cell_visible">#FFFFFF</color>
+</resources>

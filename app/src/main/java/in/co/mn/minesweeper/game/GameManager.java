@@ -7,7 +7,7 @@ import in.co.mn.minesweeper.model.MineCell;
 /**
  * Created by manuMohan on 15/04/28.
  */
-public class GameState {
+public class GameManager {
     private static final Integer ROWS = 8;
     private static final Integer COLUMNS = 8;
     private static final Integer NUMBER_OF_MINES = 10;
@@ -22,7 +22,7 @@ public class GameState {
 
     private State currentState;
 
-    public GameState() {
+    public GameManager() {
         grid = new Cell[ROWS][COLUMNS];
         currentState = State.ON;
     }
@@ -73,6 +73,7 @@ public class GameState {
     public void initLandCells() {
         for (int i = 0; i < getRows(); ++i)
             for (int j = 0; j < getColumns(); ++j) {
+                if(isMineCell(i,j))continue;
                 LandCell landCell = new LandCell();
                 landCell.setCount(getMineCount(i, j));
                 grid[i][j] = landCell;
@@ -123,13 +124,13 @@ public class GameState {
             currentState = State.FAIL;
     }
 
-    private void click(int column, int row) {
+    public void click(int column, int row) {
         if (row < 0 || row >= getRows() || column < 0 || column >= getColumns()) return;
         if (isMineCell(row, column)) {
             currentState = State.FAIL;
             return;
         }
-
+        if (grid[row][column].isVisible()) return;
         grid[row][column].setVisible(true);
         if (((LandCell) (grid[row][column])).getCount() == 0) {
             click(row - 1, column);

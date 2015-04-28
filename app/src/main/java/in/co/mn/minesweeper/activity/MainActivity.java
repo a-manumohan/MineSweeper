@@ -1,19 +1,34 @@
 package in.co.mn.minesweeper.activity;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import in.co.mn.minesweeper.R;
+import in.co.mn.minesweeper.game.GameManager;
+import in.co.mn.minesweeper.view.MineSweeperView;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity implements MineSweeperView.DataSource {
+
+    private MineSweeperView mMineSweeperView;
+    private GameManager mGameManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mGameManager = new GameManager();
+        mGameManager.initRandomGame();
+
+        initViews();
+
+    }
+
+    private void initViews() {
+        mMineSweeperView = (MineSweeperView) findViewById(R.id.view_minesweeper);
+        mMineSweeperView.setDataSource(this);
     }
 
     @Override
@@ -36,5 +51,16 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public GameManager getGameState() {
+        return mGameManager;
+    }
+
+    @Override
+    public void click(int row, int column) {
+        mGameManager.click(row, column);
+        mMineSweeperView.invalidate();
     }
 }
