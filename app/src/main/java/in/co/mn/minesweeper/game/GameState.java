@@ -146,14 +146,14 @@ public class GameState {
 
     public void setAllVisible() {
         for (int i = 0; i < getRows(); ++i)
-            for (int j = 0; j < getColumns(); ++i)
+            for (int j = 0; j < getColumns(); ++j)
                 grid[i][j].setVisible(true);
     }
 
     public boolean validate() {
         boolean valid = true;
         for (int i = 0; i < getRows(); ++i)
-            for (int j = 0; j < getColumns(); ++i)
+            for (int j = 0; j < getColumns(); ++j)
                 if (grid[i][j] instanceof LandCell)
                     if (!grid[i][j].isVisible())
                         valid = false;
