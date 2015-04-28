@@ -7,6 +7,7 @@ import android.view.MenuItem;
 
 import in.co.mn.minesweeper.R;
 import in.co.mn.minesweeper.game.GameManager;
+import in.co.mn.minesweeper.model.GameState;
 import in.co.mn.minesweeper.view.MineSweeperView;
 
 
@@ -54,8 +55,8 @@ public class MainActivity extends AppCompatActivity implements MineSweeperView.D
     }
 
     @Override
-    public GameManager getGameState() {
-        return mGameManager;
+    public GameState getGameState() {
+        return mGameManager.getGameState();
     }
 
     @Override

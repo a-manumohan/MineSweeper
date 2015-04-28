@@ -1,6 +1,6 @@
 package in.co.mn.minesweeper.game;
 
-import in.co.mn.minesweeper.model.Cell;
+import in.co.mn.minesweeper.model.GameState;
 import in.co.mn.minesweeper.model.LandCell;
 import in.co.mn.minesweeper.model.MineCell;
 
@@ -8,62 +8,28 @@ import in.co.mn.minesweeper.model.MineCell;
  * Created by manuMohan on 15/04/28.
  */
 public class GameManager {
-    private static final Integer ROWS = 8;
-    private static final Integer COLUMNS = 8;
-    private static final Integer NUMBER_OF_MINES = 10;
 
-    private Cell grid[][];
-
-    public enum State {
-        ON,
-        FAIL,
-        WIN
-    }
-
-    private State currentState;
+    GameState gameState;
 
     public GameManager() {
-        grid = new Cell[ROWS][COLUMNS];
-        currentState = State.ON;
+        gameState = new GameState();
     }
 
-    public int getColumns() {
-        return COLUMNS;
+    public GameState getGameState() {
+        return gameState;
     }
 
-    public int getRows() {
-        return ROWS;
-    }
-
-    public State getCurrentState() {
-        return currentState;
-    }
-
-    public Cell[][] getGrid() {
-        return grid;
-    }
-
-    public void setCell(Cell cell, int row, int column) {
-        if (row > grid.length - 1 || column > grid[row].length)
-            throw new ArrayIndexOutOfBoundsException("Grid Overflow");
-        grid[row][column] = cell;
-    }
-
-    public boolean isMineCell(int row, int column) {
-        return grid[row][column] != null && grid[row][column] instanceof MineCell;
-    }
-
-    public boolean isLandCell(int row, int column) {
-        return grid[row][column] != null && grid[row][column] instanceof LandCell;
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
     }
 
     public void initRandomGame() {
-        int i = NUMBER_OF_MINES;
+        int i = gameState.getMines();
         while (i > 0) {
-            int row = (int) ((Math.random() * 1000) % (getRows() - 1));
-            int column = (int) ((Math.random() * 1000) % (getColumns() - 1));
-            if (!isMineCell(row, column)) {
-                setCell(new MineCell(), row, column);
+            int row = (int) ((Math.random() * 1000) % (gameState.getRows() - 1));
+            int column = (int) ((Math.random() * 1000) % (gameState.getColumns() - 1));
+            if (!gameState.isMineCell(row, column)) {
+                gameState.setCell(new MineCell(), row, column);
                 --i;
             }
         }
@@ -71,68 +37,70 @@ public class GameManager {
     }
 
     public void initLandCells() {
-        for (int i = 0; i < getRows(); ++i)
-            for (int j = 0; j < getColumns(); ++j) {
-                if(isMineCell(i,j))continue;
+        for (int i = 0; i < gameState.getRows(); ++i)
+            for (int j = 0; j < gameState.getColumns(); ++j) {
+                if (gameState.isMineCell(i, j)) continue;
                 LandCell landCell = new LandCell();
                 landCell.setCount(getMineCount(i, j));
-                grid[i][j] = landCell;
+                gameState.setCell(landCell, i, j);
             }
     }
 
     public int getMineCount(int row, int column) {
-        if (row < 0 || column < 0 || row > getRows() - 1 || column > getColumns() - 1) return 0;
-        if (grid[row][column] instanceof MineCell) return 0;
+        if (row < 0 || column < 0 || row > gameState.getRows() - 1 || column > gameState.getColumns() - 1)
+            return 0;
+        if (gameState.getGrid()[row][column] instanceof MineCell) return 0;
 
         int count = 0;
         if (row - 1 >= 0) {
-            count += grid[row - 1][column] instanceof MineCell ? 1 : 0;
+            count += gameState.getGrid()[row - 1][column] instanceof MineCell ? 1 : 0;
             if (column - 1 >= 0) {
-                count += grid[row - 1][column - 1] instanceof MineCell ? 1 : 0;
+                count += gameState.getGrid()[row - 1][column - 1] instanceof MineCell ? 1 : 0;
             }
-            if (column + 1 <= getColumns() - 1) {
-                count += grid[row - 1][column + 1] instanceof MineCell ? 1 : 0;
+            if (column + 1 <= gameState.getColumns() - 1) {
+                count += gameState.getGrid()[row - 1][column + 1] instanceof MineCell ? 1 : 0;
             }
         }
-        if (row + 1 <= getRows() - 1) {
-            count += grid[row + 1][column] instanceof MineCell ? 1 : 0;
+        if (row + 1 <= gameState.getRows() - 1) {
+            count += gameState.getGrid()[row + 1][column] instanceof MineCell ? 1 : 0;
             if (column - 1 >= 0) {
-                count += grid[row + 1][column - 1] instanceof MineCell ? 1 : 0;
+                count += gameState.getGrid()[row + 1][column - 1] instanceof MineCell ? 1 : 0;
             }
-            if (column + 1 <= getColumns() - 1) {
-                count += grid[row + 1][column + 1] instanceof MineCell ? 1 : 0;
+            if (column + 1 <= gameState.getColumns() - 1) {
+                count += gameState.getGrid()[row + 1][column + 1] instanceof MineCell ? 1 : 0;
             }
         }
         if (column - 1 >= 0) {
-            count += grid[row][column - 1] instanceof MineCell ? 1 : 0;
+            count += gameState.getGrid()[row][column - 1] instanceof MineCell ? 1 : 0;
         }
-        if (column + 1 <= getColumns() - 1) {
-            count += grid[row][column + 1] instanceof MineCell ? 1 : 0;
+        if (column + 1 <= gameState.getColumns() - 1) {
+            count += gameState.getGrid()[row][column + 1] instanceof MineCell ? 1 : 0;
         }
 
         return count;
     }
 
     public void setMarked(boolean marked, int row, int column) {
-        grid[row][column].setMarked(marked);
+        gameState.setMarked(marked, row, column);
     }
 
     public void performValidation() {
         boolean valid = validate();
-        if (valid) currentState = State.WIN;
+        if (valid) gameState.setCurrentState(GameState.State.WIN);
         else
-            currentState = State.FAIL;
+            gameState.setCurrentState(GameState.State.FAIL);
     }
 
     public void click(int column, int row) {
-        if (row < 0 || row >= getRows() || column < 0 || column >= getColumns()) return;
-        if (isMineCell(row, column)) {
-            currentState = State.FAIL;
+        if (row < 0 || row >= gameState.getRows() || column < 0 || column >= gameState.getColumns())
+            return;
+        if (gameState.isMineCell(row, column)) {
+            gameState.setCurrentState(GameState.State.FAIL);
             return;
         }
-        if (grid[row][column].isVisible()) return;
-        grid[row][column].setVisible(true);
-        if (((LandCell) (grid[row][column])).getCount() == 0) {
+        if (gameState.getGrid()[row][column].isVisible()) return;
+        gameState.getGrid()[row][column].setVisible(true);
+        if (((LandCell) (gameState.getGrid()[row][column])).getCount() == 0) {
             click(row - 1, column);
             click(row - 1, column - 1);
             click(row - 1, column + 1);
@@ -146,17 +114,17 @@ public class GameManager {
     }
 
     public void setAllVisible() {
-        for (int i = 0; i < getRows(); ++i)
-            for (int j = 0; j < getColumns(); ++j)
-                grid[i][j].setVisible(true);
+        for (int i = 0; i < gameState.getRows(); ++i)
+            for (int j = 0; j < gameState.getColumns(); ++j)
+                gameState.getGrid()[i][j].setVisible(true);
     }
 
     public boolean validate() {
         boolean valid = true;
-        for (int i = 0; i < getRows(); ++i)
-            for (int j = 0; j < getColumns(); ++j)
-                if (grid[i][j] instanceof LandCell)
-                    if (!grid[i][j].isVisible())
+        for (int i = 0; i < gameState.getRows(); ++i)
+            for (int j = 0; j < gameState.getColumns(); ++j)
+                if (gameState.getGrid()[i][j] instanceof LandCell)
+                    if (!gameState.getGrid()[i][j].isVisible())
                         valid = false;
         return valid;
     }

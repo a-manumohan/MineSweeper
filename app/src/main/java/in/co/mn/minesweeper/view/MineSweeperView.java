@@ -10,8 +10,8 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import in.co.mn.minesweeper.R;
-import in.co.mn.minesweeper.game.GameManager;
 import in.co.mn.minesweeper.model.Cell;
+import in.co.mn.minesweeper.model.GameState;
 
 /**
  * Created by manuMohan on 15/04/28.
@@ -87,15 +87,15 @@ public class MineSweeperView extends View {
         if (mDataSource == null) return;
         if (mDataSource.getGameState() == null)
             throw new NullPointerException("GameState cannot be null");
-        GameManager gameManager = mDataSource.getGameState();
-        Cell[][] grid = gameManager.getGrid();
+        GameState gameState = mDataSource.getGameState();
+        Cell[][] grid = gameState.getGrid();
 
-        mCellWidth = mSide / gameManager.getColumns();
-        mCellHeight = mSide / gameManager.getRows();
+        mCellWidth = mSide / gameState.getColumns();
+        mCellHeight = mSide / gameState.getRows();
         float x = 0, y = 0;
-        for (int i = 0; i < gameManager.getRows(); ++i) {
+        for (int i = 0; i < gameState.getRows(); ++i) {
             x = 0;
-            for (int j = 0; j < gameManager.getColumns(); ++j) {
+            for (int j = 0; j < gameState.getColumns(); ++j) {
                 canvas.drawRect(x, y, x + mCellWidth, y + mCellHeight, mCellBorderPaint);
                 if (!grid[i][i].isVisible()) {
                     canvas.drawRect(x + CELL_PADDING, y + CELL_PADDING, x + mCellWidth - CELL_PADDING, y + mCellHeight - CELL_PADDING, mCellFillPaint);
@@ -146,7 +146,7 @@ public class MineSweeperView extends View {
     }
 
     public interface DataSource {
-        public GameManager getGameState();
+        public GameState getGameState();
 
         public void click(int row, int column);
     }

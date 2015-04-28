@@ -17,7 +17,7 @@ public class GameState {
 
     private State currentState;
 
-    public GameState(){
+    public GameState() {
         grid = new Cell[ROWS][COLUMNS];
         currentState = State.ON;
     }
@@ -30,13 +30,36 @@ public class GameState {
         return ROWS;
     }
 
-    public int getMines(){return NUMBER_OF_MINES;}
+    public int getMines() {
+        return NUMBER_OF_MINES;
+    }
 
     public State getCurrentState() {
         return currentState;
     }
 
+    public void setCurrentState(State currentState) {
+        this.currentState = currentState;
+    }
+
     public Cell[][] getGrid() {
         return grid;
+    }
+
+    public void setCell(Cell cell, int row, int column) {
+        if (row > grid.length - 1 || column > grid[row].length)
+            throw new ArrayIndexOutOfBoundsException("Grid Overflow");
+        grid[row][column] = cell;
+    }
+
+    public boolean isMineCell(int row, int column) {
+        return grid[row][column] != null && grid[row][column] instanceof MineCell;
+    }
+
+    public boolean isLandCell(int row, int column) {
+        return grid[row][column] != null && grid[row][column] instanceof LandCell;
+    }
+    public void setMarked(boolean marked, int row, int column) {
+        grid[row][column].setMarked(marked);
     }
 }
