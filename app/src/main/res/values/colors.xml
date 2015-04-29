@@ -4,4 +4,5 @@
     <color name="border_cell">#000000</color>
     <color name="fill_cell">#ADD8E6</color>
     <color name="fill_cell_visible">#FFFFFF</color>
+    <color name="count">#000000</color>
 </resources>

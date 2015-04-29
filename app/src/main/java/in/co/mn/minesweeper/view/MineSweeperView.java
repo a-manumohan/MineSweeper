@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -12,6 +13,7 @@ import android.view.View;
 import in.co.mn.minesweeper.R;
 import in.co.mn.minesweeper.model.Cell;
 import in.co.mn.minesweeper.model.GameState;
+import in.co.mn.minesweeper.model.LandCell;
 
 /**
  * Created by manuMohan on 15/04/28.
@@ -23,7 +25,8 @@ public class MineSweeperView extends View {
     private Paint mCellBorderPaint;
     private Paint mCellFillPaint;
     private Paint mCellVisiblePaint;
-    //    private Paint mBackgroundPaint;
+    private Paint mCountPaint;
+
     private int mSide;
     private float mCellWidth;
     private float mCellHeight;
@@ -33,20 +36,24 @@ public class MineSweeperView extends View {
 
     public MineSweeperView(Context context) {
         super(context);
+        setWillNotDraw(false);
         init();
     }
 
     public MineSweeperView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setWillNotDraw(false);
         init();
     }
 
     public MineSweeperView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setWillNotDraw(false);
         init();
     }
 
     private void init() {
+
         Resources res = getContext().getResources();
         mBackgroundPaint = new Paint(0);
         mBackgroundPaint.setColor(res.getColor(R.color.bg_game_view));
@@ -62,6 +69,11 @@ public class MineSweeperView extends View {
         mCellVisiblePaint = new Paint(0);
         mCellVisiblePaint.setColor(res.getColor(R.color.fill_cell_visible));
         mCellVisiblePaint.setStyle(Paint.Style.FILL_AND_STROKE);
+
+        mCountPaint = new Paint(0);
+        mCountPaint.setColor(res.getColor(R.color.count));
+        mCountPaint.setTextSize(25.0f);
+        mCountPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
 
         mGestureDetector = new GestureDetector(this.getContext(), new GestureListener());
 
@@ -81,7 +93,7 @@ public class MineSweeperView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+//        super.onDraw(canvas);
 
         canvas.drawRect(0, 0, mSide, mSide, mBackgroundPaint);
         if (mDataSource == null) return;
@@ -92,15 +104,23 @@ public class MineSweeperView extends View {
 
         mCellWidth = mSide / gameState.getColumns();
         mCellHeight = mSide / gameState.getRows();
-        float x = 0, y = 0;
+        float x, y = 0;
         for (int i = 0; i < gameState.getRows(); ++i) {
             x = 0;
             for (int j = 0; j < gameState.getColumns(); ++j) {
                 canvas.drawRect(x, y, x + mCellWidth, y + mCellHeight, mCellBorderPaint);
-                if (!grid[i][i].isVisible()) {
+                if (!grid[i][j].isVisible()) {
                     canvas.drawRect(x + CELL_PADDING, y + CELL_PADDING, x + mCellWidth - CELL_PADDING, y + mCellHeight - CELL_PADDING, mCellFillPaint);
-                }else {
+                } else {
                     canvas.drawRect(x + CELL_PADDING, y + CELL_PADDING, x + mCellWidth - CELL_PADDING, y + mCellHeight - CELL_PADDING, mCellVisiblePaint);
+                    if (grid[i][j] instanceof LandCell) {
+                        int count = ((LandCell) (grid[i][j])).getCount();
+                        if (count != 0) {
+                            float countX = (x + x + mCellWidth) / 2-(mCountPaint.getTextSize()/2);
+                            float countY = (y + y + mCellHeight) / 2-((mCountPaint.ascent()+mCountPaint.descent())/2);
+                            canvas.drawText(count + "", countX, countY, mCountPaint);
+                        }
+                    }
                 }
                 x += mCellWidth;
             }

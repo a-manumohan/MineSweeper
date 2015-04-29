@@ -91,7 +91,7 @@ public class GameManager {
             gameState.setCurrentState(GameState.State.FAIL);
     }
 
-    public void click(int column, int row) {
+    public void click(int row, int column) {
         if (row < 0 || row >= gameState.getRows() || column < 0 || column >= gameState.getColumns())
             return;
         if (gameState.isMineCell(row, column)) {
@@ -99,7 +99,9 @@ public class GameManager {
             return;
         }
         if (gameState.getGrid()[row][column].isVisible()) return;
+
         gameState.getGrid()[row][column].setVisible(true);
+
         if (((LandCell) (gameState.getGrid()[row][column])).getCount() == 0) {
             click(row - 1, column);
             click(row - 1, column - 1);

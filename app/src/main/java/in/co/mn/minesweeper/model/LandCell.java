@@ -6,8 +6,6 @@ package in.co.mn.minesweeper.model;
 public class LandCell extends Cell{
     private int count;
 
-
-
     public LandCell(){
         
     }

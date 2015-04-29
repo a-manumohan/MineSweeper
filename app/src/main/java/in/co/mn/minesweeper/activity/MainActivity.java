@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import in.co.mn.minesweeper.R;
 import in.co.mn.minesweeper.game.GameManager;
@@ -62,6 +63,16 @@ public class MainActivity extends AppCompatActivity implements MineSweeperView.D
     @Override
     public void click(int row, int column) {
         mGameManager.click(row, column);
+        switch (mGameManager.getGameState().getCurrentState()){
+            case ON:
+                Toast.makeText(this,"ON",Toast.LENGTH_SHORT).show();
+                break;
+            case FAIL:
+                Toast.makeText(this,"Fail",Toast.LENGTH_SHORT).show();
+                break;
+            case WIN:
+                break;
+        }
         mMineSweeperView.invalidate();
     }
 }
