@@ -20,11 +20,16 @@ public class MainActivity extends AppCompatActivity implements MineSweeperView.D
     private MineSweeperView mMineSweeperView;
     private GameManager mGameManager;
 
+    private static final String TAG_GAME_MANAGER = "game_manager";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        startNewGame();
+        if (savedInstanceState != null) {
+            mGameManager = (GameManager) savedInstanceState.getSerializable(TAG_GAME_MANAGER);
+        } else
+            startNewGame();
         initViews();
 
     }
@@ -117,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements MineSweeperView.D
                 .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                        startNewGame();
                     }
                 });
         builder.show();
@@ -134,5 +139,11 @@ public class MainActivity extends AppCompatActivity implements MineSweeperView.D
                     }
                 });
         builder.show();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(TAG_GAME_MANAGER, mGameManager);
     }
 }

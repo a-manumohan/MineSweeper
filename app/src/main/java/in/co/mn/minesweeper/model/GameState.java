@@ -1,9 +1,11 @@
 package in.co.mn.minesweeper.model;
 
+import java.io.Serializable;
+
 /**
  * Created by manuMohan on 15/04/29.
  */
-public class GameState {
+public class GameState implements Serializable{
     private static final Integer ROWS = 8;
     private static final Integer COLUMNS = 8;
     private static final Integer NUMBER_OF_MINES = 10;

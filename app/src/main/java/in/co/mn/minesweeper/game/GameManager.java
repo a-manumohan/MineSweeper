@@ -1,5 +1,7 @@
 package in.co.mn.minesweeper.game;
 
+import java.io.Serializable;
+
 import in.co.mn.minesweeper.model.GameState;
 import in.co.mn.minesweeper.model.LandCell;
 import in.co.mn.minesweeper.model.MineCell;
@@ -7,7 +9,7 @@ import in.co.mn.minesweeper.model.MineCell;
 /**
  * Created by manuMohan on 15/04/28.
  */
-public class GameManager {
+public class GameManager implements Serializable{
 
     GameState gameState;
 
