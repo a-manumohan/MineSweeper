@@ -89,9 +89,11 @@ public class GameManager {
         if (valid) gameState.setCurrentState(GameState.State.WIN);
         else
             gameState.setCurrentState(GameState.State.FAIL);
+        setAllVisible();
     }
 
     public void click(int row, int column) {
+        if(gameState.getCurrentState() != GameState.State.ON)return;
         if (row < 0 || row >= gameState.getRows() || column < 0 || column >= gameState.getColumns())
             return;
         if (gameState.isMineCell(row, column)) {

@@ -2,8 +2,11 @@ package in.co.mn.minesweeper.view;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -31,6 +34,9 @@ public class MineSweeperView extends View {
     private float mCellWidth;
     private float mCellHeight;
     private final float CELL_PADDING = 2;
+
+    private Bitmap mBombBitmap;
+    private RectF mBombRectF;
 
     private GestureDetector mGestureDetector;
 
@@ -75,6 +81,10 @@ public class MineSweeperView extends View {
         mCountPaint.setTextSize(25.0f);
         mCountPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
 
+        mBombRectF = new RectF();
+
+        mBombBitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_explosive_bomb);
+
         mGestureDetector = new GestureDetector(this.getContext(), new GestureListener());
 
 
@@ -84,6 +94,7 @@ public class MineSweeperView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         mSide = w > h ? h : w;
+        setMeasuredDimension(mSide, mSide);
     }
 
     @Override
@@ -116,10 +127,16 @@ public class MineSweeperView extends View {
                     if (grid[i][j] instanceof LandCell) {
                         int count = ((LandCell) (grid[i][j])).getCount();
                         if (count != 0) {
-                            float countX = (x + x + mCellWidth) / 2-(mCountPaint.getTextSize()/2);
-                            float countY = (y + y + mCellHeight) / 2-((mCountPaint.ascent()+mCountPaint.descent())/2);
+                            float countX = (x + x + mCellWidth) / 2 - (mCountPaint.getTextSize() / 2);
+                            float countY = (y + y + mCellHeight) / 2 - ((mCountPaint.ascent() + mCountPaint.descent()) / 2);
                             canvas.drawText(count + "", countX, countY, mCountPaint);
                         }
+                    } else {
+                        mBombRectF.set((x + CELL_PADDING),
+                                (y + CELL_PADDING),
+                                (x + mCellWidth - CELL_PADDING),
+                                (y + mCellHeight - CELL_PADDING));
+                        canvas.drawBitmap(mBombBitmap, null, mBombRectF, null);
                     }
                 }
                 x += mCellWidth;

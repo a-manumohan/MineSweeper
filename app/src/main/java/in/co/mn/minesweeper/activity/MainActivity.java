@@ -1,10 +1,13 @@
 package in.co.mn.minesweeper.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.Button;
 
 import in.co.mn.minesweeper.R;
 import in.co.mn.minesweeper.game.GameManager;
@@ -21,9 +24,7 @@ public class MainActivity extends AppCompatActivity implements MineSweeperView.D
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mGameManager = new GameManager();
-        mGameManager.initRandomGame();
-
+        startNewGame();
         initViews();
 
     }
@@ -31,6 +32,32 @@ public class MainActivity extends AppCompatActivity implements MineSweeperView.D
     private void initViews() {
         mMineSweeperView = (MineSweeperView) findViewById(R.id.view_minesweeper);
         mMineSweeperView.setDataSource(this);
+
+        Button newGameButton = (Button) findViewById(R.id.action_new);
+        newGameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startNewGame();
+                mMineSweeperView.invalidate();
+            }
+        });
+        Button validateButton = (Button) findViewById(R.id.action_validate);
+        validateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mGameManager.performValidation();
+                checkGameState();
+                mMineSweeperView.invalidate();
+            }
+        });
+        Button cheatButton = (Button) findViewById(R.id.action_cheat);
+        cheatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mGameManager.setAllVisible();
+                mMineSweeperView.invalidate();
+            }
+        });
     }
 
     @Override
@@ -63,16 +90,49 @@ public class MainActivity extends AppCompatActivity implements MineSweeperView.D
     @Override
     public void click(int row, int column) {
         mGameManager.click(row, column);
-        switch (mGameManager.getGameState().getCurrentState()){
-            case ON:
-                Toast.makeText(this,"ON",Toast.LENGTH_SHORT).show();
-                break;
+        checkGameState();
+        mMineSweeperView.invalidate();
+    }
+
+    private void startNewGame() {
+        mGameManager = new GameManager();
+        mGameManager.initRandomGame();
+    }
+
+    private void checkGameState() {
+        switch (mGameManager.getGameState().getCurrentState()) {
             case FAIL:
-                Toast.makeText(this,"Fail",Toast.LENGTH_SHORT).show();
+                showFailureAlert();
                 break;
             case WIN:
+                showSuccessAlert();
                 break;
         }
-        mMineSweeperView.invalidate();
+    }
+
+    private void showFailureAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle("Failure")
+                .setMessage("You stepped on a Mine! :(")
+                .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+        builder.show();
+    }
+
+    private void showSuccessAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle("Success")
+                .setMessage("You cleared the Mine Field!")
+                .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+        builder.show();
     }
 }
