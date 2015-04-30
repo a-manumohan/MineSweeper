@@ -28,8 +28,8 @@ public class GameManager implements Serializable{
     public void initRandomGame() {
         int i = gameState.getMines();
         while (i > 0) {
-            int row = (int) ((Math.random() * 1000) % (gameState.getRows() - 1));
-            int column = (int) ((Math.random() * 1000) % (gameState.getColumns() - 1));
+            int row = (int) ((Math.random() * 1000) % (gameState.getRows() ));
+            int column = (int) ((Math.random() * 1000) % (gameState.getColumns() ));
             if (!gameState.isMineCell(row, column)) {
                 gameState.setCell(new MineCell(), row, column);
                 --i;
