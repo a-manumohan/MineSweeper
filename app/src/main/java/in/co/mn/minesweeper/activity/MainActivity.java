@@ -123,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements MineSweeperView.D
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         startNewGame();
+                        mMineSweeperView.invalidate();
                     }
                 });
         builder.show();
